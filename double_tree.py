@@ -208,8 +208,6 @@ class double_tree :
                     if len(self.__singleNode(node.left)) == 0 and len(self.__singleNode(node.right)) == 0 :
                         pre = get_parent(noleaf_tree.root, node)
                         self.__del(pre, node)
-                        print(pre)
-                        print(node.left)
                         self.__insert(pre, node.left)
                         self.__insert(noleaf_tree.singleNode[0], node.right)
 
