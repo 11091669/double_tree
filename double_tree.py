@@ -163,6 +163,7 @@ class double_tree :
         if len(T.singleNode) < 2 : return
         insNode = T.singleNode[0] if self.__level(T.root, T.singleNode[0]) >= self.__level(T.root, T.singleNode[1]) else T.singleNode[1]
         recvNode = T.singleNode[0] if insNode.value == T.singleNode[1].value else T.singleNode[1]
+        print(insNode)
         if insNode.left != None :
             inschild = insNode.left
             insNode.left = None
@@ -200,25 +201,36 @@ class double_tree :
                 if node.value == noleaf_tree.singleNode[0].value :
                     child = node.left if node.left != None else node.right
                     pre = get_parent(noleaf_tree.root, node)
-                    self.__del(pre, node)
-                    self.__insert(pre, child)
+                    if pre != None :
+                        self.__del(pre, node)
+                        self.__insert(pre, child)
+                    else :
+                        noleaf_tree.root = child
                 
                 else :
                     # 删除节点的子树不包含单树节点，默认将左子树接在pre，右子树接在单树节点
                     if len(self.__singleNode(node.left)) == 0 and len(self.__singleNode(node.right)) == 0 :
                         pre = get_parent(noleaf_tree.root, node)
-                        self.__del(pre, node)
-                        self.__insert(pre, node.left)
-                        self.__insert(noleaf_tree.singleNode[0], node.right)
+                        if pre != None:
+                            self.__del(pre, node)
+                            self.__insert(pre, node.left)
+                            self.__insert(noleaf_tree.singleNode[0], node.right)
+                        else :
+                            noleaf_tree.root = node.left
+                            self.__insert(noleaf_tree.singleNode[0], node.right)
 
                     # 否则将包含单树节点的子树接在pre，不包含的子树接在单树节点
                     else :
                         withSingleNode = node.left if len(self.__singleNode(node.left)) != 0 else node.right
                         noSingleNode = node.left if len(self.__singleNode(node.left)) == 0 else node.right
                         pre = get_parent(noleaf_tree.root, node)
-                        self.__del(pre, node)
-                        self.__insert(pre, withSingleNode)
-                        self.__insert(noleaf_tree.singleNode[0], noSingleNode)
+                        if pre != None :
+                            self.__del(pre, node)
+                            self.__insert(pre, withSingleNode)
+                            self.__insert(noleaf_tree.singleNode[0], noSingleNode)
+                        else :
+                            noleaf_tree.root = withSingleNode
+                            self.__insert(noleaf_tree.singleNode[0], noSingleNode)
 
         self.size -= 1                
         self.__find_specialNode()
@@ -244,10 +256,5 @@ class double_tree :
         self.T1.print()
         self.T2.print()
 
-
-
-tree = double_tree(10)
-tree.erase_node(6)
-tree.print() 
 
 
