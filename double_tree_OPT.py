@@ -11,7 +11,7 @@ class Tree :
         print(self.specialNode)
         print(self.singleNode)
 
-class double_tree :
+class double_tree_OPT :
     
     T1 = Tree()
     T2 = Tree()
@@ -161,8 +161,27 @@ class double_tree :
     def __merge_singleNode(self, T):
         self.__find_singleNode(T)
         if len(T.singleNode) < 2 : return
+
+        # 优化点
+        # 当两个节点level相同时，这时它们是兄弟节点，此时的更优解的合并方法是将子树高的那个节点取出来连接到它的兄弟节点，它的子树就连接到pre上，这样可以使树高降低
+        print(self.__level(T.root, T.singleNode[1]))
+        if self.__level(T.root, T.singleNode[0]) == self.__level(T.root, T.singleNode[1]):
+            if T.singleNode[0].height >= T.singleNode[1].height :
+                insNode,recvNode = T.singleNode[0], T.singleNode[1]  
+            else:
+                insNode,recvNode = T.singleNode[1], T.singleNode[0]
+            pre = get_parent(T.root, insNode)
+            child = insNode.left if insNode.left != None else insNode.right
+            print("do this")
+            self.__del(pre, insNode)
+            self.__del(insNode, child)
+            self.__insert(pre, child)
+            self.__insert(recvNode, insNode)
+            return
+        
         insNode = T.singleNode[0] if self.__level(T.root, T.singleNode[0]) >= self.__level(T.root, T.singleNode[1]) else T.singleNode[1]
         recvNode = T.singleNode[0] if insNode.value == T.singleNode[1].value else T.singleNode[1]
+
         if insNode.left != None :
             inschild = insNode.left
             insNode.left = None
@@ -208,16 +227,22 @@ class double_tree :
                         noleaf_tree.root = child
                 
                 else :
-                    # 删除节点的子树不包含单树节点，默认将左子树接在pre，右子树接在单树节点
+                    # 优化点
+                    # 删除节点的子树不包含单树节点，对左右子树实行贪心策略，即每次都将高度高的子树接在level小的节点上
                     if len(self.__singleNode(node.left)) == 0 and len(self.__singleNode(node.right)) == 0 :
                         pre = get_parent(noleaf_tree.root, node)
-                        if pre != None:
-                            self.__del(pre, node)
-                            self.__insert(pre, node.left)
-                            self.__insert(noleaf_tree.singleNode[0], node.right)
+                        if node.left.height >= node.right.height :
+                            h, l = node.left, node.right
                         else :
-                            noleaf_tree.root = node.left
-                            self.__insert(noleaf_tree.singleNode[0], node.right)
+                            h, l = node.right, node.left
+                        if self.__level(noleaf_tree.root, pre) > self.__level(noleaf_tree.root, noleaf_tree.singleNode[0]):
+                            self.__del(pre, node)
+                            self.__insert(pre, l)
+                            self.__insert(noleaf_tree.singleNode[0], h)
+                        else :
+                            self.__del(pre, node)
+                            self.__insert(pre, h)
+                            self.__insert(noleaf_tree.singleNode[0], l)
 
                     # 否则将包含单树节点的子树接在pre，不包含的子树接在单树节点
                     else :
