@@ -8,8 +8,6 @@ class Tree :
 
     def print(self):
         print(self.root)
-        print(self.specialNode)
-        print(self.singleNode)
 
 class double_tree :
     
@@ -172,6 +170,14 @@ class double_tree :
         self.__insert(recvNode, inschild)
 
     def erase_node(self, value):
+        if self.__find_node(self.T1.root, value) == None :
+            return -1
+        if self.size == 1 :
+            self.T1.root = None
+            self.T2.root = None
+            self.T1.specialNode = None
+            self.T2.specialNode = None
+            return 0
         # 删除节点都是叶节点即是特殊节点
         if self.__is_leaf(self.T1, value) and self.__is_leaf(self.T2, value):
             # 找到特殊节点后删去
