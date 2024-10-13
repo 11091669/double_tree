@@ -6,6 +6,11 @@ class Tree :
     specialNode = None    # 特殊节点
     singleNode = None     # 单树节点
 
+    @property
+    def height(self):
+        if self.root == None: return 0
+        return self.root.height + 1
+
     def print(self):
         print(self.root)
 
@@ -257,8 +262,7 @@ class double_tree :
             self.__insert(addNode1, self.T2.specialNode)
 
 
-
     def print(self):
         self.T1.print()
         self.T2.print()
-
+        print(self.T1.root.height)
