@@ -237,34 +237,24 @@ class double_tree_OPT :
                 
                 else :
                     # 优化点
-                    # 删除节点的子树不包含单树节点，对左右子树实行贪心策略，即每次都将高度高的子树接在level小的节点上
-                    if len(self.__singleNode(node.left)) == 0 and len(self.__singleNode(node.right)) == 0 :
-                        pre = get_parent(noleaf_tree.root, node)
-                        if node.left.height >= node.right.height :
-                            h, l = node.left, node.right
-                        else :
-                            h, l = node.right, node.left
-                        if self.__level(noleaf_tree.root, pre) > self.__level(noleaf_tree.root, noleaf_tree.singleNode[0]):
-                            self.__del(pre, node)
-                            self.__insert(pre, l)
-                            self.__insert(noleaf_tree.singleNode[0], h)
-                        else :
-                            self.__del(pre, node)
-                            self.__insert(pre, h)
-                            self.__insert(noleaf_tree.singleNode[0], l)
+                    # 直接用单树节点进行替换
+                    pre = get_parent(noleaf_tree.root, noleaf_tree.singleNode[0])
+                    ##删除节点是根节点
+                    if noleaf_tree.singleNode[0].left == None :
+                        insert_node = noleaf_tree.singleNode[0].right
+                    else : insert_node = noleaf_tree.singleNode[0].left
 
-                    # 否则将包含单树节点的子树接在pre，不包含的子树接在单树节点
-                    else :
-                        withSingleNode = node.left if len(self.__singleNode(node.left)) != 0 else node.right
-                        noSingleNode = node.left if len(self.__singleNode(node.left)) == 0 else node.right
-                        pre = get_parent(noleaf_tree.root, node)
-                        if pre != None :
-                            self.__del(pre, node)
-                            self.__insert(pre, withSingleNode)
-                            self.__insert(noleaf_tree.singleNode[0], noSingleNode)
-                        else :
-                            noleaf_tree.root = withSingleNode
-                            self.__insert(noleaf_tree.singleNode[0], noSingleNode)
+                    self.__del(noleaf_tree.singleNode[0], insert_node)
+                    if pre != None:
+                        self.__del(pre, noleaf_tree.singleNode[0])
+                        self.__insert(pre, insert_node)
+                    else:
+                        noleaf_tree.root = insert_node
+
+                    node.value = noleaf_tree.singleNode[0].value
+                    
+
+                    
 
         self.size -= 1                
         self.__find_specialNode()

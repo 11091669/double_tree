@@ -20,23 +20,24 @@ if __name__ == "__main__" :
     Size = int(sys.argv[1])
     file = 'size_'+ str(Size) + "_" + time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time())) + '.txt'
 
-    for i in range(30):
+    for i in range(1):
         tree = dbT(Size)
         tree_OPT = dbT_OPT(Size)
         eraseNodes = [i for i in range(Size)]
         random.shuffle(eraseNodes)
         Max = [-1, -1, -1]
         count = Size / 4
+        # print(eraseNodes)
         for i in eraseNodes :
             if count == 0 :break
+            print(i)
             tree.erase_node(i)
             tree_OPT.erase_node(i)
             if tree.size == 0 : break 
             perfectH = math.ceil(math.log2(tree.size))
             h1 = max(tree.T1.height, tree.T2.height)
             h2 = max(tree_OPT.T1.height, tree_OPT.T2.height)
-            if h2 - perfectH > 4 : 
-                tree.print()
+            if h2 - perfectH > 1 : 
                 tree_OPT.print()
             with open(file, 'a') as f:
                 # f.write("tree = " + str(h1)  + "tree_OPT = " + str(h2) + "perfectH = " + str(perfectH) + "diff = " + str((h1 - h2)) + "\n")
