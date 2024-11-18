@@ -261,6 +261,17 @@ class double_tree_OPT :
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
 
+    def __calculate_depth(self, node, target, depth=0):
+        if node is None:
+            return -1 
+        if node == target:
+            return depth
+        left_depth = self.__calculate_depth(node.left, target, depth + 1)
+        if left_depth != -1:
+            return left_depth
+        right_depth = self.__calculate_depth(node.right, target, depth + 1)
+        return right_depth
+
     def add_node(self, value):
         addNode1 = Node(value)
         addNode2 = Node(value)
@@ -268,13 +279,32 @@ class double_tree_OPT :
             self.__insert(self.T1.singleNode[0], addNode1)
             self.__insert(self.T2.singleNode[0], addNode2)
         else :
+            #优化点：插入时调整特殊节点的位置
+            if self.__calculate_depth(self.T1.root, self.T1.specialNode) != self.T1.root.min_leaf_depth :
+                for leaf in self.T1.root.levelorder :
+                    if leaf.height == 0 :
+                        min_depth_leave1 = leaf
+                        break  
+                self.T1.specialNode.value, min_depth_leave1.value = min_depth_leave1.value, self.T1.specialNode.value
+
+            if self.__calculate_depth(self.T2.root, self.T2.specialNode) != self.T2.root.min_leaf_depth :
+                for leaf in self.T2.root.levelorder :
+                    if leaf.height == 0 :
+                        min_depth_leave2 = leaf
+                        break  
+                self.T2.specialNode.value, min_depth_leave2.value = min_depth_leave2.value, self.T2.specialNode.value
+            self.__find_specialNode()
+            
             self.__insert(self.T1.specialNode, addNode1)
             pre = get_parent(self.T2.root, self.T2.specialNode)
             self.__del(pre, self.T2.specialNode) 
-            self.__insert(pre, addNode1)
-            self.__insert(addNode1, self.T2.specialNode)
-
-
+            self.__insert(pre, addNode2)
+            self.__insert(addNode2, self.T2.specialNode)
+        
+        self.size += 1                
+        self.__find_specialNode()
+        self.__find_singleNode(self.T1)
+        self.__find_singleNode(self.T2)
 
     def print(self):
         self.T1.print()

@@ -258,8 +258,13 @@ class double_tree :
             self.__insert(self.T1.specialNode, addNode1)
             pre = get_parent(self.T2.root, self.T2.specialNode)
             self.__del(pre, self.T2.specialNode) 
-            self.__insert(pre, addNode1)
-            self.__insert(addNode1, self.T2.specialNode)
+            self.__insert(pre, addNode2)
+            self.__insert(addNode2, self.T2.specialNode)
+        
+        self.size += 1                
+        self.__find_specialNode()
+        self.__find_singleNode(self.T1)
+        self.__find_singleNode(self.T2)
 
 
     def print(self):
