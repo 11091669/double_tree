@@ -9,7 +9,7 @@ class Tree :
     @property
     def height(self):
         if self.root == None: return 0
-        return self.root.height + 1
+        return self.root.height
 
     def print(self):
         print(self.root)
