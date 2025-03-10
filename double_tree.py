@@ -202,10 +202,24 @@ class double_tree :
             self.__merge_singleNode(leaf_tree)
             # 然后处理非叶节点的树
             node = self.__find_node(noleaf_tree.root, value)
-            # 存在特殊节点则直接替换
+            # 存在特殊节点则插入特殊节点
             if noleaf_tree.specialNode != None :
-                node.value = noleaf_tree.specialNode.value
-                del noleaf_tree.root[get_index(noleaf_tree.root, noleaf_tree.specialNode)]
+                pre = get_parent(noleaf_tree.root, node)
+                if pre != None:
+                    self.__del(pre, node)
+                    if self.__find_node(node.left, noleaf_tree.specialNode.value) != None:
+                        self.__insert(pre, node.left)
+                        self.__insert(noleaf_tree.specialNode, node.right)
+                    else :
+                        self.__insert(pre, node.right)
+                        self.__insert(noleaf_tree.specialNode, node.left)
+                else :
+                    if self.__find_node(node.left, noleaf_tree.specialNode.value) != None:
+                        noleaf_tree.root = node.left
+                        self.__insert(noleaf_tree.specialNode, node.right)
+                    else :
+                        noleaf_tree.root = node.right
+                        self.__insert(noleaf_tree.specialNode, node.left)
             # 不存在特殊节点就一定存在单树节点
             else :
                 # 删除节点为单树节点时，直接将子节点连接到父节点上
