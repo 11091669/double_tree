@@ -24,6 +24,7 @@ class double_tree_OPT :
         self.size = size
         self.T1.root = self.__T1()
         self.T2.root = self.__T2()
+        self.height = max(self.T1.height, self.T2.height)
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
         self.__find_specialNode()
@@ -260,6 +261,7 @@ class double_tree_OPT :
         self.__find_specialNode()
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
+        self.height = max(self.T1.height, self.T2.height)
 
     def __calculate_depth(self, node, target, depth=0):
         if node is None:
@@ -305,6 +307,7 @@ class double_tree_OPT :
         self.__find_specialNode()
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
+        self.height = max(self.T1.height, self.T2.height)
 
     def print(self):
         self.T1.print()

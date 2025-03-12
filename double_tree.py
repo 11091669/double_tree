@@ -24,6 +24,7 @@ class double_tree :
         self.size = size
         self.T1.root = self.__T1()
         self.T2.root = self.__T2()
+        self.height = max(self.T1.height, self.T2.height)
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
         self.__find_specialNode()
@@ -261,6 +262,7 @@ class double_tree :
         self.__find_specialNode()
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
+        self.height = max(self.T1.height, self.T2.height)
 
     def add_node(self, value):
         addNode1 = Node(value)
@@ -279,6 +281,7 @@ class double_tree :
         self.__find_specialNode()
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
+        self.height = max(self.T1.height, self.T2.height)
 
 
     def print(self):
