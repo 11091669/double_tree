@@ -14,7 +14,7 @@ class Tree :
     def print(self):
         print(self.root)
 
-class double_tree_OPT :
+class CBTP_OPT :
     
     T1 = Tree()
     T2 = Tree()
@@ -25,6 +25,7 @@ class double_tree_OPT :
         self.T1.root = self.__T1()
         self.T2.root = self.__T2()
         self.height = max(self.T1.height, self.T2.height)
+        self.rewired_links = 0
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
         self.__find_specialNode()
@@ -155,12 +156,15 @@ class double_tree_OPT :
             pre.left = insNode
         else : 
             pre.right = insNode
+        insNode.parent = pre
+        self.rewired_links += 1
 
     def __del(self, pre, node):
         if pre.left != None and pre.left.value == node.value :
             pre.left = None
         elif pre.right != None and pre.right.value == node.value :
             pre.right = None
+        node.parent = None
             
     def __merge_singleNode(self, T):
         self.__find_singleNode(T)
@@ -204,8 +208,10 @@ class double_tree_OPT :
         # 删除节点都是叶节点即是特殊节点
         if self.__is_leaf(self.T1, value) and self.__is_leaf(self.T2, value):
             # 找到特殊节点后删去
-            del self.T1.root[get_index(self.T1.root, self.T1.specialNode)]
-            del self.T2.root[get_index(self.T2.root, self.T2.specialNode)]
+            pre1 = get_parent(self.T1.root, self.T1.specialNode)
+            pre2 = get_parent(self.T2.root, self.T2.specialNode)
+            self.__del(pre1, self.T1.specialNode)
+            self.__del(pre2, self.T2.specialNode)
             self.T1.specialNode = None
             self.T2.specialNode = None
 
@@ -223,6 +229,8 @@ class double_tree_OPT :
             # 存在特殊节点则直接替换
             if noleaf_tree.specialNode != None :
                 node.value = noleaf_tree.specialNode.value
+                self.rewired_links += 3
+                
                 del noleaf_tree.root[get_index(noleaf_tree.root, noleaf_tree.specialNode)]
             # 不存在特殊节点就一定存在单树节点
             else :
@@ -240,7 +248,7 @@ class double_tree_OPT :
                     # 优化点
                     # 直接用单树节点进行替换
                     pre = get_parent(noleaf_tree.root, noleaf_tree.singleNode[0])
-                    ##删除节点是根节点
+                    # 删除节点是根节点
                     if noleaf_tree.singleNode[0].left == None :
                         insert_node = noleaf_tree.singleNode[0].right
                     else : insert_node = noleaf_tree.singleNode[0].left
@@ -253,6 +261,7 @@ class double_tree_OPT :
                         noleaf_tree.root = insert_node
 
                     node.value = noleaf_tree.singleNode[0].value
+                    self.rewired_links += 3
                     
 
                     
@@ -288,6 +297,7 @@ class double_tree_OPT :
                         min_depth_leave1 = leaf
                         break  
                 self.T1.specialNode.value, min_depth_leave1.value = min_depth_leave1.value, self.T1.specialNode.value
+                self.rewired_links += 2
 
             if self.__calculate_depth(self.T2.root, self.T2.specialNode) != self.T2.root.min_leaf_depth :
                 for leaf in self.T2.root.levelorder :
@@ -295,6 +305,7 @@ class double_tree_OPT :
                         min_depth_leave2 = leaf
                         break  
                 self.T2.specialNode.value, min_depth_leave2.value = min_depth_leave2.value, self.T2.specialNode.value
+                self.rewired_links += 1
             self.__find_specialNode()
             
             self.__insert(self.T1.specialNode, addNode1)

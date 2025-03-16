@@ -8,12 +8,13 @@ class TreeNode:
         return f"Node({self.rank})"
 
 class FTCO:
-    def __init__(self, original_bandwidth, size=0):
+    def __init__(self, size=0, original_bandwidth=0):
         self.root = None
         self.nodes = {}                # {rank: TreeNode}
         self.original_bandwidth = original_bandwidth
         self._size = size               # 节点总数
         self._max_degree = 0           # 当前最大子节点数
+        self.rewired_links = 0
         self.__initialize_by_size(size)
 
     @property
@@ -22,7 +23,7 @@ class FTCO:
             if not node.children: 
                 return 1
             return 1 + max(dfs(child) for child in node.children)
-        return dfs(self.root) if self.root else 0
+        return dfs(self.root) - 1 if self.root else 0
 
     @property
     def size(self):
@@ -87,6 +88,7 @@ class FTCO:
                 for child in target.children:
                     if child != new_root:
                         new_root.children.append(child)
+                        self.rewired_links += 1
                         child.parent = new_root
                 self.root = new_root
         
@@ -96,6 +98,7 @@ class FTCO:
             for child in target.children:
                 child.parent = parent
                 parent.children.append(child)
+                self.rewired_links += 1
             parent.children.remove(target)
         
         del self.nodes[rank]

@@ -14,7 +14,7 @@ class Tree :
     def print(self):
         print(self.root)
 
-class double_tree :
+class CBTP :
     
     T1 = Tree()
     T2 = Tree()
@@ -25,6 +25,7 @@ class double_tree :
         self.T1.root = self.__T1()
         self.T2.root = self.__T2()
         self.height = max(self.T1.height, self.T2.height)
+        self.rewired_links = 0
         self.__find_singleNode(self.T1)
         self.__find_singleNode(self.T2)
         self.__find_specialNode()
@@ -155,18 +156,20 @@ class double_tree :
             pre.left = insNode
         else : 
             pre.right = insNode
+        insNode.parent = pre
+        self.rewired_links += 1
 
     def __del(self, pre, node):
         if pre.left != None and pre.left.value == node.value :
             pre.left = None
         elif pre.right != None and pre.right.value == node.value :
             pre.right = None
+        node.parent = None
             
     def __merge_singleNode(self, T):
         self.__find_singleNode(T)
         if len(T.singleNode) < 2 : return
-        insNode = T.singleNode[0] if self.__level(T.root, T.singleNode[0]) >= self.__level(T.root, T.singleNode[1]) else T.singleNode[1]
-        recvNode = T.singleNode[0] if insNode.value == T.singleNode[1].value else T.singleNode[1]
+        insNode, recvNode = sorted(T.singleNode, key=lambda x: self.__level(T.root, x), reverse=True)[:2]
         if insNode.left != None :
             inschild = insNode.left
             insNode.left = None
@@ -187,8 +190,10 @@ class double_tree :
         # 删除节点都是叶节点即是特殊节点
         if self.__is_leaf(self.T1, value) and self.__is_leaf(self.T2, value):
             # 找到特殊节点后删去
-            del self.T1.root[get_index(self.T1.root, self.T1.specialNode)]
-            del self.T2.root[get_index(self.T2.root, self.T2.specialNode)]
+            pre1 = get_parent(self.T1.root, self.T1.specialNode)
+            pre2 = get_parent(self.T2.root, self.T2.specialNode)
+            self.__del(pre1, self.T1.specialNode)
+            self.__del(pre2, self.T2.specialNode)
             self.T1.specialNode = None
             self.T2.specialNode = None
 
@@ -287,4 +292,11 @@ class double_tree :
     def print(self):
         self.T1.print()
         self.T2.print()
-        print(self.T1.root.height)
+
+if __name__ == "__main__" :
+    # 测试删除序列 [498, 451, 135, ...] 的前10个节点
+    test_nodes = [354, 394, 459, 204, 497, 423, 227, 316, 243, 159, 56, 165, 301, 176, 38, 336, 140, 137, 276, 490, 400, 272, 315, 352, 114, 270, 233, 447, 462, 99, 70, 143, 197, 476, 224, 330, 364, 307, 39, 369, 167, 404, 115, 4, 179, 302, 15, 18, 193, 110, 318, 390, 246, 392, 367, 347, 189, 61, 471, 235, 343, 77, 119, 439, 180, 464, 288, 321, 157, 63, 262, 129, 10, 457, 428, 73, 446, 22, 381, 271, 329, 443, 200, 361, 429, 106, 122, 311, 312, 162, 387, 463, 357, 141, 9, 46, 411, 207, 435, 23, 360, 340, 417, 40, 492, 11, 215, 239, 44, 280, 313, 120, 265, 419, 19, 406, 134, 210, 158, 229, 188, 249, 97, 268, 76, 154, 103, 427, 437, 118, 258, 55, 232, 355, 474, 186, 396, 412, 82, 74, 264, 92, 164, 85, 109, 43, 12, 478, 252, 484, 202, 363, 205, 170, 183, 332, 291, 65, 69, 84, 136, 116, 274, 458, 498, 131, 309, 37, 48, 275, 267, 88, 95, 465, 50, 231, 287, 26, 240, 454, 445, 399, 338, 27, 414, 161, 323, 402, 297, 353, 24, 282, 166, 96, 452, 362, 13, 25, 253, 16, 20, 51, 418, 482, 494, 424, 219, 29, 289, 299, 420, 261, 112, 256, 370, 123, 36, 152, 223, 66, 477, 196, 221, 292, 365, 480, 300, 451, 14, 310, 42, 98, 125, 281, 410, 378, 483, 251, 47, 344, 226, 296, 171, 331, 146, 317, 100, 273, 175, 397, 139, 304, 426, 185, 432, 374, 327, 393, 135, 466, 172, 111, 60, 335, 217, 486, 433, 325, 187, 30, 481, 376, 208, 244, 391, 334, 468, 194, 345, 155, 17, 101, 71, 395, 212, 150, 238, 105, 250, 409, 407, 173, 373, 358, 416, 339, 242, 359, 487, 33, 57, 285, 68, 237, 283, 75, 488, 349, 372, 469, 319, 160, 266, 199, 21, 79, 149, 163, 448, 431, 107, 430, 375, 255, 440, 279, 182, 64, 7, 442, 203, 377, 59, 49, 263, 461, 222, 450, 2, 32, 366, 259, 467, 385, 121, 415, 230, 58, 178, 341, 384, 346, 108, 388, 473, 78, 389, 470, 491, 305, 34, 485, 147, 441, 216, 444, 383, 456, 130, 453, 102, 320, 177, 206, 191, 89, 322, 460, 91, 386, 496, 303, 449, 113, 225, 260, 87, 0, 86, 168, 220, 236, 368, 5, 499, 67, 234, 94, 6, 201, 8, 126, 3, 181, 475, 117, 413, 324, 403, 350, 127, 151, 379, 351, 133, 495, 218, 90, 277, 28, 148, 421, 337, 401, 144, 81, 293, 308, 245, 62, 405, 284, 247, 408, 211, 248, 83, 398, 142, 356, 434, 45, 153, 333, 241, 479, 278, 52, 72, 192, 104, 328, 436, 314, 295, 290, 54, 294, 380, 53, 31, 425, 128, 342, 35, 326, 156, 80, 1, 145, 257, 422, 184, 489, 174, 228, 254, 269, 472, 132, 455, 93, 371, 209, 298, 195, 438, 190, 214, 138, 198, 286, 348, 124, 213, 493, 169, 41, 306, 382]
+    cbtp = CBTP(size=500)
+    for node in test_nodes:
+        cbtp.erase_node(node)
+        cbtp.print()  # 输出当前树结构
