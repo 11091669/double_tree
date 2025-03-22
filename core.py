@@ -2,7 +2,7 @@ import heapq
 
 class Network:
     time_step = 0.1  # 时间步长
-    rewired_time = 20  # 链路重连时长（时间步长的整数倍）
+    rewired_time = 0.1  # 链路重连时长（时间步长的整数倍）
     bandwidth = 10e9  # 网络带宽设置为10GB
     latency = 0.01
 
