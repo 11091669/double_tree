@@ -2,7 +2,7 @@ import heapq
 
 class Network:
     time_step = 0.1  # 时间步长
-    rewired_time = 0.1  # 链路重连时长（时间步长的整数倍）
+    rewired_time = 20  # 链路重连时长（时间步长的整数倍）
     bandwidth = 10e9  # 网络带宽设置为10GB
     latency = 0.01
 
@@ -13,6 +13,7 @@ class Event:
         self.TYPE = TYPE
         
     def __lt__(self, other):
+
         """ heapq优先比较时间，其次优先级 """
         return (self.timestamp, self.priority) < (other.timestamp, other.priority)
         
@@ -75,7 +76,7 @@ class AllreduceEvent(Event):
         """处理传输事件"""
         print(f"[{sim.current_time}]Allreduce剩余数据量为{self.data_size}")
         # 计算本次传输时间
-        if self.data_size / sim.current_bandwidth < Network.time_step :
+        if self.data_size  <= Network.time_step * sim.current_bandwidth :
             # 数据量除以带宽小于时间步长，时间计算加上双向链路延迟
             time = Network.latency * sim.topology.height * 2 + self.data_size / sim.current_bandwidth
             transferred = self.data_size

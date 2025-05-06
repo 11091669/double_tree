@@ -11,14 +11,9 @@ import time
 import csv
 import os
 
-SaveDir = f'./result_bandwith{Network.bandwidth}_rewiredtime{Network.rewired_time}_timestep{Network.time_step}_latency{Network.latency}/'
 
-# 创建目录（如果目录不存在）
-if not os.path.exists(SaveDir):
-    os.makedirs(SaveDir)
-    print(f"目录已创建: {SaveDir}")
-else:
-    print(f"目录已存在: {SaveDir}")
+datas = [10e3, 10e6, 1e9, 10e9, 100e9]  # 数据大小单位B
+
 
 # 测试场景：无故障场景
 # 测试指标：树高
@@ -87,7 +82,7 @@ def height_withf():
 # 变量：节点数、消息大小
 def Allreduce_nof():
     Sizes = [128,256,512,1024]
-    datas = [10e3, 10e6, 10e9, 100e9, 1e12]  # 数据大小单位KB
+
     Title = ["data_size", "CBTP_OPT",  "FTCO"] 
     Data = [0]*len(Title)
     for Size in Sizes:
@@ -120,7 +115,6 @@ def Allreduce_nof():
 # CBTP在单点故障时依然有一棵树可用，使得小消息完成更快, 大消息也有提升
 def Allreduce_with1f():
     Sizes = [128,256,512,1024]
-    datas = [10e3, 10e6, 10e9, 100e9, 1e12]  # 数据大小单位KB
     Title = ["data_size", "CBTP_OPT",  "FTCO"] 
     Data = [0]*len(Title)
     for num in range(1,11):
@@ -162,7 +156,6 @@ def Allreduce_with1f():
 # CBTP在连续单点故障时依然有一棵树可用，使得小消息完成更快, 大消息也有提升
 def Allreduce_with_serialf():
     Sizes = [128,256,512,1024]
-    datas = [10e3, 10e6, 10e9, 100e9, 1e12]  # 数据大小单位KB
     Title = ["data_size", "CBTP_OPT",  "FTCO"] 
     Data = [0]*len(Title)
     for num in range(1,11):
@@ -211,7 +204,6 @@ def Allreduce_with_serialf():
 # CBTP在两棵树同时被破坏时拥有跟FTCO一样的恢复时间
 def Allreduce_with2f():
     Sizes = [128,256,512,1024]
-    datas = [10e3, 10e6, 10e9, 100e9, 1e12]  # 数据大小单位KB
     Title = ["data_size", "CBTP_OPT",  "FTCO"] 
     Data = [0]*len(Title)
     for num in range(1,11):
@@ -255,7 +247,6 @@ def Allreduce_with2f():
 # CBTP在连续并发故障时恢复与FTCO一致，但恢复后拥有更好的树结构
 def Allreduce_with_serial2f():
     Sizes = [128,256,512,1024]
-    datas = [10e3, 10e6, 10e9, 100e9, 1e12]  # 数据大小单位KB
     Title = ["data_size", "CBTP_OPT",  "FTCO"] 
     Data = [0]*len(Title)
     for num in range(1,11):
@@ -360,14 +351,28 @@ def bandwidth_withf():
                 ftco.erase_node(eraseNode)
 
 if __name__ == "__main__" :
-    height_nof()
-    bandwidth_withf()
-    height_withf()
-    Allreduce_nof()
-    Allreduce_with1f()
-    Allreduce_with_serialf()
-    Allreduce_with2f()
+
+    time = float(sys.argv[1])
+    Network.rewired_time = time
+
+    SaveDir = f'./result_bandwith{Network.bandwidth}_rewiredtime{Network.rewired_time}_timestep{Network.time_step}_latency{Network.latency}/'
+
+    # 创建目录（如果目录不存在）
+    if not os.path.exists(SaveDir):
+        os.makedirs(SaveDir)
+        print(f"目录已创建: {SaveDir}")
+    else:
+        print(f"目录已存在: {SaveDir}")
+
+
+    # height_nof()
+    # bandwidth_withf()
+    # height_withf()
+    # Allreduce_nof()
+    # Allreduce_with1f()
+    # Allreduce_with_serialf()
+    # Allreduce_with2f()
     Allreduce_with_serial2f()
-    rewirdlinks_withf()
+    # rewirdlinks_withf()
     
     # pass
